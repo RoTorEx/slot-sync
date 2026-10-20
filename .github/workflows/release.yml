@@ -51,7 +51,11 @@ jobs:
         with:
           name: callendars-syncer-python
           path: dist
-      - env:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Verify release metadata and publish assets
+        env:
           GH_TOKEN: ${{ github.token }}
         run: |
           version=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml","rb"))["project"]["version"])')

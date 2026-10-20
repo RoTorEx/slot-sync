@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Select Python 3.13 explicitly in the GitHub publisher so TOML version checks
+  also run on runners whose system Python predates tomllib.
+
 ## [0.2.7] - 2026-10-20
 
 - Replace the Rust runtime with a modular Python CLI and a systemd oneshot timer.
