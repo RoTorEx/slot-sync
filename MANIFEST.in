@@ -1,0 +1,6 @@
+include Makefile uv.lock requirements.lock CHANGELOG.md BUSINESS.md AGENTS.md ROADMAP.md TASK.md
+recursive-include scripts *.py *.sh
+recursive-include deploy *.md *.service *.timer
+recursive-include business *.md
+recursive-include .vibe/kernel *.md VERSION
+recursive-include tests *.py

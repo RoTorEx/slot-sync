@@ -1,6 +1,15 @@
-# Changelog
+# Callendars Syncer changelog
 
 ## [Unreleased]
+
+- Replace the Rust runtime with a modular Python CLI and a systemd oneshot timer.
+- Preserve current routes, legacy event identities, title modes, guests, OAuth
+  credentials, privacy boundaries and schema-v1 Telegram monitoring.
+- Persist creation IDs in SQLite to reconcile uncertain insert outcomes without
+  choosing a new ID on each retry; retain local single-writer locking.
+- Publish portable Python wheel/source artifacts with checksums and retain the
+  original Gallendar deployment for rollback.
+
 
 ## [0.2.6] - 2026-10-20
 

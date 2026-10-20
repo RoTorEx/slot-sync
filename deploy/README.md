@@ -1,103 +1,72 @@
-# Linux VPS operation
+# Python deployment and Gallendar replacement
 
-The supported server is Linux x86_64 with systemd. GitHub Release builds use
-Ubuntu 22.04 for compatibility with Debian 13. The Mac remains a manual fallback;
-only one machine writes a given namespace. Running the same schedule on multiple
-machines is not coordination: new copies have random IDs and can race.
+The intended target is the existing Linux VPS. Retain the gallendar service user,
+config, token files, namespace and safe health path so the Telegram bot requires
+no mount or configuration change. Python is installed in an isolated versioned
+virtual environment; no system Python packages are overwritten.
 
-## Install and switch the writer
+## Paths
 
-Download `gallendar-linux-x86_64.tar.gz` and its `.sha256` from the intended GitHub
-Release, verify the checksum, and extract it into a private staging directory.
-Use this release's repository scripts/unit, then run from its checkout:
+- Code: `/opt/callendars-syncer/releases/VERSION/venv`.
+- Active release link: `/opt/callendars-syncer/current`.
+- Existing config: `/srv/gallendar/.x-cli-gallendar/config.toml`.
+- Existing OAuth files: paths relative to that config, unchanged.
+- New private state: `/srv/gallendar/callendars-syncer/state.sqlite3`.
+- New private logs: `/srv/gallendar/callendars-syncer/logs`.
+- Existing public health: `/srv/gallendar/health/health.json`.
 
-```sh
-sudo sh scripts/install-systemd.sh /path/to/extracted/gallendar
-```
+A release must include the wheel and SHA-256, matching units, and locked Python
+requirements. Install with pip in a private release environment using the exported
+hashed lock, then install the wheel with --no-deps. Read back the installed
+version, run the offline demo and tests, then live doctor and preview. Credentials
+must remain readable only by the intended service identity. Release code is
+root-owned and the service cannot modify it.
 
-The installer stages the binary and hardened system unit without starting it.
-It preserves existing configuration and credentials. The dedicated `gallendar`
-user owns `/srv/gallendar/.x-cli-gallendar`; no login shell or Docker socket is
-required. The service starts at boot without a desktop login and restarts after
-30 seconds on exit. Shutdown allows 120 seconds for requests to finish. Its
-256 MiB memory, 20% CPU and 32-task ceilings constrain a lightweight personal
-sync without reserving host capacity.
+## Cutover
 
-Keep a private recovery copy of the Mac config, OAuth files and launchd plist.
-Transfer the config, OAuth client JSON and per-account token directory over SSH,
-preserving relative paths. Use the same OAuth client and namespace. Configure
-`auto_update = false` on the server: version replacement and service restart are
-an explicit release operation. Do not copy unrelated service-account keys.
-Config/client/token files must be 0600 and secret directories 0700, owned by
-`gallendar`. Never print tokens, copy them into Git, or mount them into the bot.
+1. Keep the old writer running while installing and doing read-only validation.
+   The Python preview may refresh OAuth, but does not write calendar events.
+2. Compare its plan with Rust using the same config and a read-only comparison
+   copy in the same private directory if needed to avoid Rust's held config lock.
+   Investigate any unexpected create, update, delete or logical-key difference.
+3. Preserve the old unit, executable identity, private config/OAuth snapshot and
+   the current health snapshot under a root-only recovery directory.
+4. Install both new units with `scripts/install-systemd.sh`; it does not start them.
+5. Stop and disable `gallendar.service`; verify MainPID=0. Inhibit the old unit with
+   a drop-in condition so accidental starts cannot race with the Python timer.
+6. Set `/opt/callendars-syncer/current` to the verified release. Run
+   `systemctl start callendars-syncer.service`. Verify its successful exit,
+   fresh health, private pass counts and another no-change preview.
+7. Enable `callendars-syncer.timer` with --now and read back the next activation.
+   Re-run the oneshot service to verify restart/recovery and no extra copies.
+8. Read the health snapshot through the bot's actual mounted path. Do not
+   fabricate production reauthentication failures for a monitoring check.
 
-Before changing the writer, verify the copied configuration and run `doctor`
-and `sync --dry-run` as `gallendar` with `HOME=/srv/gallendar`. A preview never
-writes Google events. Compare namespace, routes, titles, guests and horizon
-against the source config; investigate unexpected deletions before proceeding.
+The timer runs every half hour. `Persistent=true` catches missed activation on
+restart. It does not create concurrent instances of the same service. The service
+also conflicts with the retired Gallendar unit and takes its legacy config lock.
+Those protections are host-local; do not deploy another active writer server.
 
-On the Mac run `gallendar daemon stop` and verify `running=false` and
-`enabled=false`. Only then enable the server:
+## Rollback
 
-```sh
-sudo systemctl enable --now gallendar.service
-sudo -u gallendar env HOME=/srv/gallendar /srv/gallendar/.x-cli-gallendar/bin/gallendar status --json
-sudo systemctl status gallendar.service
-```
+Stop and disable callendars-syncer.timer, then stop callendars-syncer.service and
+verify no Python writer remains. Remove the old service's migration condition
+from its dedicated drop-in, reload systemd, then enable/start gallendar.service.
+Keep the existing config and latest OAuth files: do not overwrite rotated refresh
+tokens with older recovery copies unless repairing confirmed corruption. The
+original binary, event markers and namespace remain compatible. Check a successful
+old-engine pass and the bot's health view. Preserve the Python SQLite state for
+investigation or a later return.
 
-Verify a successful applied pass and a subsequent no-change preview. Check that
-service restart produces a new worker and another success without duplicates.
-An enabled unit establishes boot configuration, not a completed host reboot;
-do not reboot a shared VPS just to verify this service.
+## Reauthorization and updates
 
-## Health and alerts
+Stop the timer and active pass before replacing a credential. Sign in locally
+using the existing Desktop OAuth client and intended account, transfer only that
+account file atomically with owner gallendar and mode 0600, run doctor, then start
+the service and timer. Token directories remain 0700. Production OAuth Audience
+status is a separate operator check; working refresh does not establish it.
 
-The unit publishes `/srv/gallendar/health/health.json` atomically after applied
-periodic passes. Set `GALLENDAR_HEALTH_DIR` to select a directory explicitly;
-without it no public health snapshot is written. Dry runs and one-shot commands
-never advance the health file. It retains last success across restarts and
-contains only version, UTC timestamps, interval, safe error kind and account
-alias. It excludes credentials, event titles and raw HTTP diagnostics. Snapshot
-publication failure stops the worker so stale state cannot claim fresh success.
-
-The existing Telegram bot mounts only this health directory read-only. It
-checks every 30 seconds, immediately reports an explicit `reauth_required` or
-missing/invalid snapshot, and reports other failures after two poll intervals
-without success. A transient network timeout is not a reauthorization request.
-At the current 1800-second interval the overdue threshold is one hour, plus
-up to 30 seconds for monitoring. Persistent notification state suppresses
-repeats across normal bot restarts; recovery sends once after a fresh success.
-The bot cannot notify during a total VPS/Telegram-network outage; external
-host heartbeat monitoring owns that boundary.
-
-Private journals remain in `/srv/gallendar/.x-cli-gallendar/logs`. Use `journalctl
--u gallendar.service` for supervisor output. `status --json` reads applied
-periodic outcomes and the actual worker version; it does not call Google.
-
-## Reauthorize an account
-
-First stop the server with `sudo systemctl stop gallendar.service`. On the Mac,
-keep its daemon stopped and run `gallendar auth login --account ACCOUNT` using
-the same client/config. Transfer only that account's new token over SSH into
-the existing `secrets/oauth/ACCOUNT.json` with atomic replacement, owner
-`gallendar` and mode 0600. Other account tokens remain unchanged. Run server
-`doctor`, restart the service, and verify a successful pass and recovery alert.
-No browser or Google password is stored on the VPS. Corporate policy can
-require administrator action instead of another login.
-
-For normal unattended use, verify Google Auth Platform Audience is In production.
-Testing tokens for Calendar expire after seven days; changing the status does
-not constitute a read-back of existing token validity. Actual token refresh and
-calendar reads are checked by `doctor` and applied passes.
-
-## Update or return to the Mac
-
-For an update, stop the server, retain its binary/config for recovery, install
-the verified new release, start it and verify health. Automatic server updates
-are disabled so a running worker cannot silently keep an old executable.
-
-To return to the Mac, stop and disable the server first, verify its MainPID is
-zero, synchronize any rotated/reissued account tokens back over SSH if needed,
-then run Mac `doctor`, preview and `gallendar daemon start`. Preserve the same
-namespace so existing copies are reconciled rather than recreated. Never start
-the Mac while the server remains an active writer.
+Update by staging a new versioned environment and doing the same doctor/preview
+checks, stopping the timer/pass, moving the active link, starting and verifying.
+Code never self-updates. Back up SQLite using its online backup API or while the
+writer is stopped, alongside configuration and appropriately protected secrets.

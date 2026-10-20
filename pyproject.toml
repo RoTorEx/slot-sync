@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "callendars-syncer"
+version = "0.2.6"
+description = "Calendar busy-time synchronization with persistent recovery and system scheduling"
+requires-python = ">=3.11"
+dependencies = ["google-auth[requests]>=2.40,<3"]
+
+[project.scripts]
+callendars-syncer = "callendars_syncer.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+callendars_syncer = ["*.toml"]
