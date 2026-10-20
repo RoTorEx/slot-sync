@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-10-20
+
 - Replace the Rust runtime with a modular Python CLI and a systemd oneshot timer.
 - Preserve current routes, legacy event identities, title modes, guests, OAuth
   credentials, privacy boundaries and schema-v1 Telegram monitoring.

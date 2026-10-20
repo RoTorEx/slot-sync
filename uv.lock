@@ -8,7 +8,7 @@ resolution-markers = [
 
 [[package]]
 name = "callendars-syncer"
-version = "0.2.6"
+version = "0.2.7"
 source = { editable = "." }
 dependencies = [
     { name = "google-auth", extra = ["requests"] },
