@@ -12,6 +12,8 @@ specified in [BUSINESS.md](BUSINESS.md), server procedures in
 [business/python-migration.md](business/python-migration.md).
 
 [Privacy information](PRIVACY.md) explains data access, storage and removal.
+Google setup and public app information are described in
+[Google publication](business/google-publication.md).
 
 ## Development
 
@@ -54,7 +56,12 @@ can be changed with SLOT_SYNC_HOME. SLOT_SYNC_CONFIG and the
 legacy GALLENDAR_CONFIG are supported. OAuth and service-key paths are resolved
 relative to the config file. The bundled example documents existing TOML fields.
 Production uses the existing explicit server config path rather than moving
-credentials during the runtime change.
+credentials during the runtime change. A private byte-for-byte import can be
+kept in `.local/gallendar-import/config.toml`, with its relative `secrets` path
+linked to the existing protected credential store on that machine. `.local/`
+is ignored by Git. The import is not a new route configuration; validate it with
+the Python parser before changing any service entry point. Keep server config
+and credentials outside the installed release so replacing code preserves them.
 
 `calendar ensure --account NAME` explicitly creates a named secondary calendar
 if configured and absent. Normal synchronization never creates calendars.

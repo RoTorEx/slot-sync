@@ -8,6 +8,12 @@ booking tools to see occupied time. A secondary-calendar experiment failed that
 real scheduling check; do not move copies back to a secondary calendar to hide
 visual duplicates. Dato's display filters exclude the configured source prefixes.
 
+The Python migration imports the existing Gallendar configuration without changing
+routes, prefixes, visibility, guest rules, all-day behavior, namespace or managed
+copy identities. Account login and publication setup do not authorize adding a
+calendar route, deleting existing copies or starting synchronization. Personal
+account authentication does not make that calendar a synchronization source.
+
 The Python migration preserves the current calendar behavior. Reverse editing,
 personal calendars, additional providers, a web UI and multiple active writer
 hosts remain deferred. Multi-directional route configuration is inherited, but
