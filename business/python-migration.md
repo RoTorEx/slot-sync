@@ -19,3 +19,11 @@ reverse-editing routes or artificial events are authorized as part of the rewrit
 
 Observed results are recorded here after verification. Existing historical
 colleague observations remain in validation.md; they are not new Python tests.
+
+## Offline verification
+
+Thirty-six focused tests passed locally and on Debian. Non-release GitHub Actions
+run 39428087719 passed Linux checks on Python 3.11/3.13, macOS checks on Python
+3.14 and clean Python package installation. These establish the implementation
+and delivery checks, not completed production migration. Private operational
+observations are retained outside Git; live acceptance remains pending.

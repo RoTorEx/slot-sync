@@ -8,7 +8,8 @@ import re
 import secrets
 import time
 from urllib.parse import parse_qs, urlencode, urlsplit
-import webbrowser
+import subprocess
+import sys
 from .config import SyncError, require
 from .storage import atomic_json, lock
 
@@ -98,6 +99,15 @@ def access_token(cfg, a, http):
         return result['access_token']
 
 
+def open_browser(url):
+    """A locked desktop must not block the loopback listener indefinitely."""
+    try:
+        subprocess.run(['open' if sys.platform == 'darwin' else 'xdg-open', url],
+                       timeout=5, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        print('Browser unavailable; open the printed URL manually.', file=sys.stderr)
+
+
 def login(cfg, a, http, no_browser=False):
     require(cfg.auth_mode(a) == 'oauth', 'Select OAuth authentication first')
     require('@' in a['owner_email'] and 'REPLACE' not in a['owner_email'], 'Set the real account owner before login')
@@ -142,9 +152,9 @@ def login(cfg, a, http, no_browser=False):
                 'scope': ' '.join(required), 'access_type': 'offline', 'prompt': 'consent select_account',
                 'login_hint': a['owner_email'], 'state': state, 'code_challenge': challenge, 'code_challenge_method': 'S256'})
             print('Open this URL on this computer to authorize account ' + a['name'] + ':\n' + url, flush=True)
-            if not no_browser:
-                webbrowser.open(url)
             deadline = time.monotonic() + 180
+            if not no_browser:
+                open_browser(url)
             while not outcome and time.monotonic() < deadline:
                 server.handle_request()
             require('code' in outcome, 'OAuth denied or timed out; previous credentials preserved')

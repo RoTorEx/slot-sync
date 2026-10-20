@@ -71,7 +71,7 @@ class LoginTests(unittest.TestCase):
                 self.assertEqual(base64.urlsafe_b64encode(hashlib.sha256(form['code_verifier'].encode()).digest()).decode().rstrip('='), result['challenge'])
                 return 200, {'access_token': 'access', 'refresh_token': 'new-offline', 'scope': ' '.join(oauth.scopes(self.cfg, self.a))}
             return 200, {'email': self.a['owner_email'], 'email_verified': True}
-        with patch('callendars_syncer.oauth.webbrowser.open', side_effect=visit), redirect_stdout(StringIO()):
+        with patch('callendars_syncer.oauth.open_browser', side_effect=visit), redirect_stdout(StringIO()):
             oauth.login(self.cfg, self.a, transport)
         for t in threads:
             t.join(5)

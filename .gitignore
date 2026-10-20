@@ -16,3 +16,6 @@ secrets/
 *.sqlite3*
 *.log
 *.lock.tmp
+
+# Private operational observations; never publish in release artifacts.
+.local/

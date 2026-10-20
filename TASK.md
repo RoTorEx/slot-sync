@@ -1,10 +1,9 @@
-# Python migration work
+# Remaining migration work
 
-- [ ] Finish implementation self-review and meaningful failure/recovery checks.
-- [ ] Verify a clean Python package installation and non-release CI.
-- [ ] Compare live Python and Rust plans without a second writer.
-- [ ] Publish the checksummed Python patch release.
-- [ ] Switch the VPS writer, verify repeated passes and the bot health consumer.
-- [ ] Register project navigation and preserve operational rollback evidence.
+- [ ] Complete live access checks and compare old/new plans.
+- [ ] Publish and stage the verified Python patch release.
+- [ ] Switch the single writer after successful live validation.
+- [ ] Verify repeated passes, monitoring consumer and rollback readiness.
 
-Reverse editing and additional calendar providers are not part of this migration.
+Offline implementation, kernel integration and project navigation registration
+are complete. Reverse editing and additional providers remain deferred.
