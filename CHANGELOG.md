@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-10-20
+
 - Adopt SlotSync as the product name, slot-sync as the repository/command, and
   slot_sync as the Python package; preserve legacy calendar ownership identities.
 
