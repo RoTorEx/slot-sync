@@ -47,3 +47,30 @@ Account login does not authorize synchronization. Inherit Gallendar's route and
 privacy settings unchanged. Do not add personal-calendar routes or reconcile
 existing copies while preparing identity grants. Never switch from existing OAuth
 to a service-account key merely because a new service identity was created.
+
+## Credentials and access checks
+
+Keep new-client credentials and tokens separate from the active client's store
+until its account grants have been verified. Login-only configuration may change
+OAuth client and token paths; all inherited route and event-behavior fields must
+remain identical. Verify the new grant's owner, client and required scopes, refresh
+it, then read the configured calendar role at the intended runtime destination.
+None of these checks requires writing an event or starting synchronization.
+
+A service identity is connected to a calendar through that calendar's sharing
+settings, not by signing into a service-account mailbox. Use the explicit calendar
+ID for checks; shared calendars do not necessarily appear in CalendarList. Read
+sources require event-detail access; destination writes require a writer role.
+Workspace policy can cap externally granted access at free/busy. Preserve OAuth
+for destinations with invited guests unless the required domain-wide delegation
+has separately been authorized and implemented. See Google's
+[calendar sharing](https://developers.google.com/workspace/calendar/api/concepts/sharing)
+and [event attendee requirements](https://developers.google.com/workspace/calendar/api/v3/reference/events).
+
+For browser diagnostics, output only allow-listed non-secret controls and safe
+status fields. Credential values can appear in accessible copy-button names;
+OAuth callback parameters can appear in browser tab titles. Do not dump credential
+dialogs, copy-button labels or callback URLs. Download JSON directly to the
+protected store, verify project/client metadata without printing secret values,
+and remove the task-owned download copy. If an unused credential is exposed,
+revoke and replace that credential before use, with authoritative read-back.
