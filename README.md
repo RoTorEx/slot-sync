@@ -11,6 +11,8 @@ specified in [BUSINESS.md](BUSINESS.md), server procedures in
 [deploy/README.md](deploy/README.md), and observed verification in
 [business/python-migration.md](business/python-migration.md).
 
+[Privacy information](PRIVACY.md) explains data access, storage and removal.
+
 ## Development
 
 Python 3.11 or newer and uv are required for packaging. The OAuth sync path uses
