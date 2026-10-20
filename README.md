@@ -1,4 +1,4 @@
-# callendars-syncer
+# SlotSync
 
 Python CLI and scheduled automation for Google Calendar busy-time copies.
 The production routes are Aveni and Thira into the explicit Innowise primary.
@@ -21,26 +21,26 @@ keys. The distribution is a portable Python wheel, not a bundled interpreter.
 
 ```sh
 make install
-uv run callendars-syncer --help
-uv run callendars-syncer demo --json
+uv run slot-sync --help
+uv run slot-sync demo --json
 make check
 make package-release
 ```
 
-The project lives under `personal/automations/callendars-syncer`. Release packages
-are built under `~/construction_side/callendars-syncer/dist` by default.
+The project lives under `personal/automations/slot-sync`. Release packages
+are built under `~/construction_side/slot-sync/dist` by default.
 
 ## Configuration and commands
 
 ```sh
-callendars-syncer setup --no-edit
-callendars-syncer config --edit
-callendars-syncer auth login --account aveni
-callendars-syncer auth status --json
-callendars-syncer doctor --json
-callendars-syncer preview --details --json
-callendars-syncer sync --apply --json
-callendars-syncer status --json
+slot-sync setup --no-edit
+slot-sync config --edit
+slot-sync auth login --account aveni
+slot-sync auth status --json
+slot-sync doctor --json
+slot-sync preview --details --json
+slot-sync sync --apply --json
+slot-sync status --json
 ```
 
 With no command, the CLI displays help. `sync` previews unless `--apply` is
@@ -49,8 +49,8 @@ work before or after the command. `init` and `setup-config` alias `setup`.
 `config --edit` uses VISUAL, EDITOR or vi as a single executable, without shell
 interpolation. Setup preserves an existing config.
 
-The default config is `~/.config/callendars-syncer/config.toml`; its directory
-can be changed with CALLENDARS_SYNCER_HOME. CALLENDARS_SYNCER_CONFIG and the
+The default config is `~/.config/slot-sync/config.toml`; its directory
+can be changed with SLOT_SYNC_HOME. SLOT_SYNC_CONFIG and the
 legacy GALLENDAR_CONFIG are supported. OAuth and service-key paths are resolved
 relative to the config file. The bundled example documents existing TOML fields.
 Production uses the existing explicit server config path rather than moving
@@ -70,7 +70,7 @@ remove its local copy: the server may use the same refresh grant.
 
 ## Scheduling and persistence
 
-On the VPS, systemd runs `callendars-syncer sync --apply --scheduled --json`.
+On the VPS, systemd runs `slot-sync sync --apply --scheduled --json`.
 The timer owns the schedule; the Python process exits after each pass. Current
 production cadence is every 30 minutes, preserving the previous schedule.
 Change both the timer and poll_seconds together when changing cadence: the
@@ -89,7 +89,7 @@ All jobs must use the same state path. A preview reads without an apply lock,
 never creates state and never advances health. Locks are local to the host;
 multiple independent writable servers are unsupported. Only the VPS runs writes.
 
-CALLENDARS_SYNCER_STATE, CALLENDARS_SYNCER_LOGS and CALLENDARS_SYNCER_HEALTH_DIR
+SLOT_SYNC_STATE, SLOT_SYNC_LOGS and SLOT_SYNC_HEALTH_DIR
 select persistent paths. GALLENDAR_HEALTH_DIR remains accepted during migration.
 Only `--scheduled` applied passes publish schema-v1 health. Foreground `run`
 remains available for manual operation, aligns passes to poll_seconds boundaries

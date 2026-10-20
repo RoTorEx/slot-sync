@@ -22,7 +22,7 @@ FREEBUSY = EVENTS + '.freebusy'
 class ReauthorizationRequired(SyncError):
     def __init__(self, account):
         self.account = account
-        super().__init__(f'OAuth account {account} requires sign-in; run callendars-syncer auth login --account {account}')
+        super().__init__(f'OAuth account {account} requires sign-in; run slot-sync auth login --account {account}')
 
 
 def scopes(cfg, a):

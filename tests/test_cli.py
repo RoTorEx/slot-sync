@@ -12,9 +12,9 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlencode, urlsplit
 from urllib.request import urlopen
-from callendars_syncer.cli import parser
-from callendars_syncer.config import SyncError
-from callendars_syncer import oauth
+from slot_sync.cli import parser
+from slot_sync.config import SyncError
+from slot_sync import oauth
 import test_sync
 
 
@@ -29,8 +29,8 @@ class CliTests(unittest.TestCase):
 
     def test_installed_style_setup_preserves_configuration(self):
         with tempfile.TemporaryDirectory() as d:
-            env = dict(os.environ, CALLENDARS_SYNCER_HOME=d)
-            command = [sys.executable, '-m', 'callendars_syncer', 'setup', '--no-edit', '--json']
+            env = dict(os.environ, SLOT_SYNC_HOME=d)
+            command = [sys.executable, '-m', 'slot_sync', 'setup', '--no-edit', '--json']
             first = json.loads(subprocess.check_output(command, env=env, text=True))
             path = Path(first['config'])
             original = path.read_bytes()
@@ -71,7 +71,7 @@ class LoginTests(unittest.TestCase):
                 self.assertEqual(base64.urlsafe_b64encode(hashlib.sha256(form['code_verifier'].encode()).digest()).decode().rstrip('='), result['challenge'])
                 return 200, {'access_token': 'access', 'refresh_token': 'new-offline', 'scope': ' '.join(oauth.scopes(self.cfg, self.a))}
             return 200, {'email': self.a['owner_email'], 'email_verified': True}
-        with patch('callendars_syncer.oauth.open_browser', side_effect=visit), redirect_stdout(StringIO()):
+        with patch('slot_sync.oauth.open_browser', side_effect=visit), redirect_stdout(StringIO()):
             oauth.login(self.cfg, self.a, transport)
         for t in threads:
             t.join(5)

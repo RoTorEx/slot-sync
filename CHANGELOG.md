@@ -1,6 +1,9 @@
-# Callendars Syncer changelog
+# SlotSync changelog
 
 ## [Unreleased]
+
+- Adopt SlotSync as the product name, slot-sync as the repository/command, and
+  slot_sync as the Python package; preserve legacy calendar ownership identities.
 
 - Select Python 3.13 explicitly in the GitHub publisher so TOML version checks
   also run on runners whose system Python predates tomllib.

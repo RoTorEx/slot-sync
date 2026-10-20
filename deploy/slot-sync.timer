@@ -1,11 +1,11 @@
 [Unit]
-Description=Run Callendars Syncer every thirty minutes
+Description=Run SlotSync every thirty minutes
 
 [Timer]
 OnCalendar=*-*-* *:00,30:00
 Persistent=true
 AccuracySec=1s
-Unit=callendars-syncer.service
+Unit=slot-sync.service
 
 [Install]
 WantedBy=timers.target

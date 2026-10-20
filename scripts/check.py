@@ -16,6 +16,6 @@ for p in (root / 'scripts').glob('*.sh'):
 print('Syntax and TOML checks passed')
 
 metadata = tomllib.loads((root / 'pyproject.toml').read_text())
-version_tree = ast.parse((root / 'src/callendars_syncer/__init__.py').read_text())
+version_tree = ast.parse((root / 'src/slot_sync/__init__.py').read_text())
 version = next(ast.literal_eval(n.value) for n in version_tree.body if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == '__version__' for t in n.targets))
 assert version == metadata['project']['version'], 'Package version sources differ'

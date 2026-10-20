@@ -1,6 +1,6 @@
 # Python migration acceptance
 
-The accepted task is a local copy under personal/automations/callendars-syncer,
+The accepted task is a local copy under personal/automations/slot-sync,
 a fresh Python implementation of current busy-copy behavior, project navigation
 registration, a public GitHub repository, a patch release and verified replacement
 of the current VPS writer. The user explicitly selected cutover after checks.

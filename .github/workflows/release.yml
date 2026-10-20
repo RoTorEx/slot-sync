@@ -32,11 +32,11 @@ jobs:
           make package-release DIST_DIR=dist
           uv venv /tmp/callendars-package-smoke
           uv pip install --python /tmp/callendars-package-smoke/bin/python dist/*.whl
-          /tmp/callendars-package-smoke/bin/callendars-syncer demo --json
-          /tmp/callendars-package-smoke/bin/callendars-syncer --version
+          /tmp/callendars-package-smoke/bin/slot-sync demo --json
+          /tmp/callendars-package-smoke/bin/slot-sync --version
       - uses: actions/upload-artifact@v6
         with:
-          name: callendars-syncer-python
+          name: slot-sync-python
           path: dist/*
           if-no-files-found: error
   publish:
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/download-artifact@v7
         with:
-          name: callendars-syncer-python
+          name: slot-sync-python
           path: dist
       - uses: actions/setup-python@v6
         with:

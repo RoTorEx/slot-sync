@@ -1,4 +1,4 @@
-# Callendars Syncer product rules
+# SlotSync product rules
 
 ## Purpose and scope
 

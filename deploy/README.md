@@ -7,12 +7,12 @@ virtual environment; no system Python packages are overwritten.
 
 ## Paths
 
-- Code: `/opt/callendars-syncer/releases/VERSION/venv`.
-- Active release link: `/opt/callendars-syncer/current`.
+- Code: `/opt/slot-sync/releases/VERSION/venv`.
+- Active release link: `/opt/slot-sync/current`.
 - Existing config: `/srv/gallendar/.x-cli-gallendar/config.toml`.
 - Existing OAuth files: paths relative to that config, unchanged.
-- New private state: `/srv/gallendar/callendars-syncer/state.sqlite3`.
-- New private logs: `/srv/gallendar/callendars-syncer/logs`.
+- New private state: `/srv/gallendar/slot-sync/state.sqlite3`.
+- New private logs: `/srv/gallendar/slot-sync/logs`.
 - Existing public health: `/srv/gallendar/health/health.json`.
 
 A release must include the wheel and SHA-256, matching units, and locked Python
@@ -34,10 +34,10 @@ root-owned and the service cannot modify it.
 4. Install both new units with `scripts/install-systemd.sh`; it does not start them.
 5. Stop and disable `gallendar.service`; verify MainPID=0. Inhibit the old unit with
    a drop-in condition so accidental starts cannot race with the Python timer.
-6. Set `/opt/callendars-syncer/current` to the verified release. Run
-   `systemctl start callendars-syncer.service`. Verify its successful exit,
+6. Set `/opt/slot-sync/current` to the verified release. Run
+   `systemctl start slot-sync.service`. Verify its successful exit,
    fresh health, private pass counts and another no-change preview.
-7. Enable `callendars-syncer.timer` with --now and read back the next activation.
+7. Enable `slot-sync.timer` with --now and read back the next activation.
    Re-run the oneshot service to verify restart/recovery and no extra copies.
 8. Read the health snapshot through the bot's actual mounted path. Do not
    fabricate production reauthentication failures for a monitoring check.
@@ -49,7 +49,7 @@ Those protections are host-local; do not deploy another active writer server.
 
 ## Rollback
 
-Stop and disable callendars-syncer.timer, then stop callendars-syncer.service and
+Stop and disable slot-sync.timer, then stop slot-sync.service and
 verify no Python writer remains. Remove the old service's migration condition
 from its dedicated drop-in, reload systemd, then enable/start gallendar.service.
 Keep the existing config and latest OAuth files: do not overwrite rotated refresh

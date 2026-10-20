@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "callendars-syncer"
+name = "slot-sync"
 version = "0.2.7"
 source = { editable = "." }
 dependencies = [

@@ -20,10 +20,10 @@ from .runner import sync
 
 
 def paths(args):
-    home = Path(os.environ.get('CALLENDARS_SYNCER_HOME', Path.home() / '.config/callendars-syncer'))
-    config = Path(args.config or os.environ.get('CALLENDARS_SYNCER_CONFIG') or os.environ.get('GALLENDAR_CONFIG') or home / 'config.toml')
-    state = Path(args.state or os.environ.get('CALLENDARS_SYNCER_STATE') or home / 'state.sqlite3')
-    logs = Path(os.environ.get('CALLENDARS_SYNCER_LOGS', home / 'logs'))
+    home = Path(os.environ.get('SLOT_SYNC_HOME', Path.home() / '.config/slot-sync'))
+    config = Path(args.config or os.environ.get('SLOT_SYNC_CONFIG') or os.environ.get('GALLENDAR_CONFIG') or home / 'config.toml')
+    state = Path(args.state or os.environ.get('SLOT_SYNC_STATE') or home / 'state.sqlite3')
+    logs = Path(os.environ.get('SLOT_SYNC_LOGS', home / 'logs'))
     return home, config, state, logs
 
 
@@ -32,8 +32,8 @@ def parser():
     shared.add_argument('--config', default=argparse.SUPPRESS)
     shared.add_argument('--state', default=argparse.SUPPRESS)
     shared.add_argument('--json', action='store_true', default=argparse.SUPPRESS)
-    p = argparse.ArgumentParser(prog='callendars-syncer', parents=[shared], description='Synchronize busy-time copies; sources stay read-only')
-    p.add_argument('--version', action='version', version='callendars-syncer ' + __version__)
+    p = argparse.ArgumentParser(prog='slot-sync', parents=[shared], description='Synchronize busy-time copies; sources stay read-only')
+    p.add_argument('--version', action='version', version='SlotSync ' + __version__)
     sub = p.add_subparsers(dest='command')
     for name in ('home', 'version', 'status', 'doctor', 'demo'):
         sub.add_parser(name, parents=[shared])
@@ -72,13 +72,13 @@ def dispatch(args):
     home, path, state, logs = paths(args)
     command = args.command
     if command in ('home', 'version'):
-        return {'home': str(home)} if command == 'home' else {'name': 'callendars-syncer', 'version': __version__}
+        return {'home': str(home)} if command == 'home' else {'name': 'SlotSync', 'version': __version__}
     if command in ('setup', 'init', 'setup-config'):
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
             fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
             with os.fdopen(fd, 'w') as f:
-                f.write(files('callendars_syncer').joinpath('example.toml').read_text())
+                f.write(files('slot_sync').joinpath('example.toml').read_text())
             created = True
         except FileExistsError:
             created = False
@@ -91,12 +91,12 @@ def dispatch(args):
             edit(path)
         return {'config': str(path)}
     if command == 'status':
-        health_dir = os.environ.get('CALLENDARS_SYNCER_HEALTH_DIR') or os.environ.get('GALLENDAR_HEALTH_DIR')
+        health_dir = os.environ.get('SLOT_SYNC_HEALTH_DIR') or os.environ.get('GALLENDAR_HEALTH_DIR')
         try:
             health = json.loads((Path(health_dir) / 'health.json').read_text()) if health_dir else None
         except (OSError, ValueError):
             health = None
-        result = {'name': 'callendars-syncer', 'version': __version__, 'config': str(path), 'state': str(state), 'health': health}
+        result = {'name': 'SlotSync', 'version': __version__, 'config': str(path), 'state': str(state), 'health': health}
         if health and health.get('last_success_at'):
             local = instant(health['last_success_at']).astimezone(ZoneInfo('Europe/Warsaw'))
             result['last_success_warsaw'] = local.strftime('%Y-%m-%d %H:%M:%S %Z (UTC%z)')
@@ -104,16 +104,16 @@ def dispatch(args):
     if command == 'daemon':
         require(sys.platform.startswith('linux'), 'Use the installed Linux systemd timer; no Mac background writer is installed')
         action = args.action
-        argv = ['systemctl', '--user'] if os.environ.get('CALLENDARS_SYNCER_USER_SERVICE') else ['systemctl']
+        argv = ['systemctl', '--user'] if os.environ.get('SLOT_SYNC_USER_SERVICE') else ['systemctl']
         if action == 'status':
-            out = subprocess.run(argv + ['show', 'callendars-syncer.timer', '-p', 'ActiveState', '-p', 'UnitFileState'], capture_output=True, text=True)
+            out = subprocess.run(argv + ['show', 'slot-sync.timer', '-p', 'ActiveState', '-p', 'UnitFileState'], capture_output=True, text=True)
         else:
             op = {'start': ['enable', '--now'], 'stop': ['disable', '--now'], 'restart': ['restart']}[action]
-            out = subprocess.run(argv + op + ['callendars-syncer.timer'], capture_output=True, text=True)
+            out = subprocess.run(argv + op + ['slot-sync.timer'], capture_output=True, text=True)
             if action == 'stop' and out.returncode == 0:
-                out = subprocess.run(argv + ['stop', 'callendars-syncer.service'], capture_output=True, text=True)
+                out = subprocess.run(argv + ['stop', 'slot-sync.service'], capture_output=True, text=True)
         require(out.returncode == 0, 'Systemd operation failed; run with the intended service administration permissions')
-        return {'action': action, 'service': 'callendars-syncer.timer', 'state': out.stdout.strip()}
+        return {'action': action, 'service': 'slot-sync.timer', 'state': out.stdout.strip()}
     if command == 'demo':
         from .demo import run
         return run()
@@ -121,7 +121,7 @@ def dispatch(args):
         apply = command != 'preview' and not args.dry_run and (args.apply or command == 'run')
         require(not args.scheduled or apply, '--scheduled requires an applied synchronization')
         kwargs = dict(apply=apply, scheduled=args.scheduled or command == 'run',
-                      health_dir=os.environ.get('CALLENDARS_SYNCER_HEALTH_DIR') or os.environ.get('GALLENDAR_HEALTH_DIR'), details=args.details)
+                      health_dir=os.environ.get('SLOT_SYNC_HEALTH_DIR') or os.environ.get('GALLENDAR_HEALTH_DIR'), details=args.details)
         if command != 'run':
             return sync(path, state, logs, **kwargs)
         stop = threading.Event()
@@ -131,7 +131,7 @@ def dispatch(args):
             try:
                 print(json.dumps(sync(path, state, logs, **kwargs)), flush=True)
             except SyncError as error:
-                print('callendars-syncer: ' + str(error), file=sys.stderr, flush=True)
+                print('slot-sync: ' + str(error), file=sys.stderr, flush=True)
             interval = Config.load(path).poll_seconds
             stop.wait(interval - time.time() % interval)
         return {'stopped': True}
@@ -189,5 +189,5 @@ def main():
         raise SystemExit(130) from None
     except (SyncError, OSError, ValueError, KeyError, TypeError, sqlite3.Error) as error:
         message = str(error) if isinstance(error, SyncError) else 'Operation failed; inspect configuration and private service diagnostics (values omitted)'
-        print('callendars-syncer: ' + message, file=sys.stderr)
+        print('slot-sync: ' + message, file=sys.stderr)
         raise SystemExit(1) from None

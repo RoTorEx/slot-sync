@@ -1,6 +1,6 @@
-# Callendars Syncer privacy information
+# SlotSync privacy information
 
-Callendars Syncer is a self-hosted calendar automation for its operator and their
+SlotSync is a self-hosted calendar automation for its operator and their
 connected accounts. It is not a hosted service that collects calendars from the
 public. The operator controls where the software runs and which calendars are
 connected.
@@ -54,7 +54,7 @@ separately, while preserving unrelated original calendar events.
 ## Contact
 
 The maintainer is available through the
-[project repository](https://github.com/RoTorEx/callendars-syncer).
+[project repository](https://github.com/RoTorEx/slot-sync).
 Do not post credentials, private calendar contents or account details in public
 issues. This document describes this application's behavior; the operator's
 hosting provider and Google have their own applicable privacy policies.

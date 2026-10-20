@@ -6,14 +6,14 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
-from callendars_syncer.config import Config, SyncError
-from callendars_syncer.demo import Memory, fixture, run
-from callendars_syncer.model import Busy, KEY, digest, instant, normalize_time, owned, source_busy
-from callendars_syncer.planner import plan
-from callendars_syncer.storage import State, atomic_json, lock
-from callendars_syncer import health, oauth
-from callendars_syncer.google import Google
-from callendars_syncer.runner import sync
+from slot_sync.config import Config, SyncError
+from slot_sync.demo import Memory, fixture, run
+from slot_sync.model import Busy, KEY, digest, instant, normalize_time, owned, source_busy
+from slot_sync.planner import plan
+from slot_sync.storage import State, atomic_json, lock
+from slot_sync import health, oauth
+from slot_sync.google import Google
+from slot_sync.runner import sync
 
 
 class DomainTests(unittest.TestCase):
@@ -207,7 +207,7 @@ class PersistenceTests(unittest.TestCase):
     def test_audit_failure_stops_before_any_mutation(self):
         cfg, api = fixture()
         with tempfile.TemporaryDirectory() as d:
-            with patch('callendars_syncer.runner.Config.load', return_value=cfg), patch('callendars_syncer.runner.Google', return_value=api), patch('callendars_syncer.runner.audit', side_effect=OSError('disk full')):
+            with patch('slot_sync.runner.Config.load', return_value=cfg), patch('slot_sync.runner.Google', return_value=api), patch('slot_sync.runner.audit', side_effect=OSError('disk full')):
                 api.resolve = lambda: api
                 with self.assertRaises(OSError):
                     sync(Path(d) / 'config.toml', Path(d) / 'state.sqlite3', Path(d) / 'logs', apply=True)
@@ -350,7 +350,7 @@ class MigrationTests(unittest.TestCase):
         api.resolve = lambda: api
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / 'state.sqlite3'
-            with patch('callendars_syncer.runner.Config.load', return_value=cfg), patch('callendars_syncer.runner.Google', return_value=api):
+            with patch('slot_sync.runner.Config.load', return_value=cfg), patch('slot_sync.runner.Google', return_value=api):
                 result = sync(Path(d) / 'config.toml', path, Path(d) / 'logs', apply=True)
             self.assertEqual(result['changes']['unchanged'], 12)
             s = State(path)

@@ -1,5 +1,5 @@
 [Unit]
-Description=Callendars Syncer single synchronization pass
+Description=SlotSync single synchronization pass
 Wants=network-online.target
 After=network-online.target
 Conflicts=gallendar.service
@@ -9,13 +9,13 @@ Type=oneshot
 User=gallendar
 Group=gallendar
 Environment=HOME=/srv/gallendar
-Environment=CALLENDARS_SYNCER_CONFIG=/srv/gallendar/.x-cli-gallendar/config.toml
-Environment=CALLENDARS_SYNCER_STATE=/srv/gallendar/callendars-syncer/state.sqlite3
-Environment=CALLENDARS_SYNCER_LOGS=/srv/gallendar/callendars-syncer/logs
-Environment=CALLENDARS_SYNCER_HEALTH_DIR=/srv/gallendar/health
+Environment=SLOT_SYNC_CONFIG=/srv/gallendar/.x-cli-gallendar/config.toml
+Environment=SLOT_SYNC_STATE=/srv/gallendar/slot-sync/state.sqlite3
+Environment=SLOT_SYNC_LOGS=/srv/gallendar/slot-sync/logs
+Environment=SLOT_SYNC_HEALTH_DIR=/srv/gallendar/health
 Environment=PYTHONDONTWRITEBYTECODE=1
 WorkingDirectory=/srv/gallendar
-ExecStart=/opt/callendars-syncer/current/venv/bin/callendars-syncer sync --apply --scheduled --json
+ExecStart=/opt/slot-sync/current/venv/bin/slot-sync sync --apply --scheduled --json
 TimeoutStartSec=10min
 TimeoutStopSec=120
 UMask=0077
