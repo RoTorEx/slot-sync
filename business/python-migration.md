@@ -26,4 +26,28 @@ Thirty-six focused tests passed locally and on Debian. Non-release GitHub Action
 run 39428087719 passed Linux checks on Python 3.11/3.13, macOS checks on Python
 3.14 and clean Python package installation. These establish the implementation
 and delivery checks, not completed production migration. Private operational
-observations are retained outside Git; live acceptance remains pending.
+observations are retained outside Git. Live server acceptance is recorded below.
+
+
+## Live VPS acceptance (2026-10-21)
+
+The inherited configuration was used with the replacement OAuth client and token
+store. Route direction, prefixes, visibility, guest rules, namespace and all-day
+policy were preserved. A server-side horizon reduction to one day removed only
+owned future destination copies outside the desired window; returning to fourteen
+days recreated the missing copies. Destination read-back matched the full desired
+logical-key set with no duplicates. Past managed events and unrelated destination
+events matched their pre-change snapshots. Source calendars were read only.
+
+The published 0.2.9 wheel was installed in its versioned VPS environment after
+checksum and package smoke checks. Its systemd installer repaired private runtime
+directory ownership. The old writer was stopped, disabled and inhibited; the
+Python timer is enabled at the inherited thirty-minute cadence. Two subsequent
+applied server passes reported no changes, with successful SQLite pass records
+and fresh schema-v1 health for the installed version at the original health path.
+
+These observations establish API reconciliation, restart idempotence and server
+scheduling. They do not constitute a new colleague booking-UI check or a fresh
+end-to-end bot check. The Mac did not run live synchronization. Network settings,
+the bot and metrics were not changed. Detailed snapshots and recovery materials
+remain private on the VPS rather than in this public repository.

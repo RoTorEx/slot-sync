@@ -10,7 +10,10 @@ virtual environment; no system Python packages are overwritten.
 - Code: `/opt/slot-sync/releases/VERSION/venv`.
 - Active release link: `/opt/slot-sync/current`.
 - Existing config: `/srv/gallendar/.x-cli-gallendar/config.toml`.
-- Existing OAuth files: paths relative to that config, unchanged.
+- Active OAuth client: `/srv/gallendar/slot-sync/secrets/oauth-client.json`.
+- Active per-account OAuth tokens: `/srv/gallendar/slot-sync/secrets/oauth/`.
+- Legacy credential files remain separate recovery material; production uses the
+  newly verified grants through the OAuth paths in the inherited config.
 - New private state: `/srv/gallendar/slot-sync/state.sqlite3`.
 - New private logs: `/srv/gallendar/slot-sync/logs`.
 - Existing public health: `/srv/gallendar/health/health.json`.
