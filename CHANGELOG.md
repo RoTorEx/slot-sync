@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.9] - 2026-10-21
+
 - Prepare the private VPS runtime and log directories for the gallendar service
   identity during systemd installation, fixing permission-denied failures when
   the runtime directory was previously staged by root.

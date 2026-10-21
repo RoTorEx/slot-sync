@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "slot-sync"
-version = "0.2.8"
+version = "0.2.9"
 description = "Calendar busy-time synchronization with persistent recovery and system scheduling"
 requires-python = ">=3.11"
 dependencies = ["google-auth[requests]>=2.40,<3"]
