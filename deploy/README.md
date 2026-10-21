@@ -32,6 +32,9 @@ root-owned and the service cannot modify it.
 3. Preserve the old unit, executable identity, private config/OAuth snapshot and
    the current health snapshot under a root-only recovery directory.
 4. Install both new units with `scripts/install-systemd.sh`; it does not start them.
+   The installer also creates or repairs the runtime and log directories with
+   owner/group gallendar and mode 0700. A root-owned runtime directory otherwise
+   prevents the service from opening SQLite or recording its first pass.
 5. Stop and disable `gallendar.service`; verify MainPID=0. Inhibit the old unit with
    a drop-in condition so accidental starts cannot race with the Python timer.
 6. Set `/opt/slot-sync/current` to the verified release. Run

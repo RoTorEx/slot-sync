@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Prepare the private VPS runtime and log directories for the gallendar service
+  identity during systemd installation, fixing permission-denied failures when
+  the runtime directory was previously staged by root.
+
 ## [0.2.8] - 2026-10-20
 
 - Adopt SlotSync as the product name, slot-sync as the repository/command, and
