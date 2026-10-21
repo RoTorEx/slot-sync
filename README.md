@@ -6,7 +6,8 @@ Source calendars remain read-only. There is no web server or Docker requirement.
 
 This repository preserves Gallendar's history, TOML routes, OAuth credential
 format and managed-event identities. Python is a fresh implementation; the
-existing Rust checkout remains a rollback source. Current calendar behavior is
+Rust runtime and original local checkout were removed after migration acceptance.
+Legacy config paths and event markers remain compatible. Current calendar behavior is
 specified in [BUSINESS.md](BUSINESS.md), server procedures in
 [deploy/README.md](deploy/README.md), and observed verification in
 [business/python-migration.md](business/python-migration.md).

@@ -5,8 +5,11 @@ a fresh Python implementation of current busy-copy behavior, project navigation
 registration, a public GitHub repository, a patch release and verified replacement
 of the current VPS writer. The user explicitly selected cutover after checks.
 
-The original checkout and its production binary remain rollback sources. No new
-reverse-editing routes or artificial events are authorized as part of the rewrite.
+The initial cutover retained the Rust checkout and binary as temporary rollback
+sources. After acceptance, the legacy local checkout, deployed Rust binary and
+systemd unit were removed at the operator's request. Git history and private
+configuration recovery material remain; no installed Rust rollback is available.
+No new reverse-editing routes or artificial events are authorized by the rewrite.
 
 ## Required evidence
 
@@ -51,3 +54,18 @@ scheduling. They do not constitute a new colleague booking-UI check or a fresh
 end-to-end bot check. The Mac did not run live synchronization. Network settings,
 the bot and metrics were not changed. Detailed snapshots and recovery materials
 remain private on the VPS rather than in this public repository.
+
+
+## Legacy runtime retirement (2026-10-21)
+
+Following successful Python acceptance, the old VPS unit, dedicated cutover
+drop-in, restart marker and Rust executables were removed. The old local checkout
+and installation remnants were also removed after verifying that its committed
+history is an ancestor of SlotSync. SlotSync has no Git alternates dependency on
+the deleted checkout, and its obsolete local source remote was removed.
+
+The canonical compatibility config path, active OAuth credentials, SQLite state,
+private recovery data and existing health path remain in place. The retained
+legacy path and Unix service-user names are data compatibility details rather
+than an installed Gallendar application. A prior compatible Python version is
+the supported rollback target.

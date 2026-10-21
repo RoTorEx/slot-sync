@@ -69,8 +69,9 @@ exclusion across machines. Google credentials and public health are separate.
 The existing horizon is 14 days and polling interval 1800 seconds. The accepted
 horizon range is one to thirty days; the current interval keeps source changes
 within the next half-hour pass, subject to API availability and pass duration.
-Systemd owns scheduling and boot activation. A stopped old writer remains
-available for explicit rollback; the Mac daemon stays absent.
+Systemd owns scheduling and boot activation. The Rust writer was uninstalled
+after migration acceptance. Rollback uses an earlier compatible Python release;
+the Mac daemon stays absent.
 
 The health schema remains version 1 for Telegram Assistant compatibility.
 Successful scheduled passes advance last_success_at; failed passes preserve it.
