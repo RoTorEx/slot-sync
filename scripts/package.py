@@ -3,9 +3,12 @@ import hashlib
 from pathlib import Path
 import sys
 import re
-import tomllib
 root = Path(sys.argv[1])
-version = tomllib.loads((Path(__file__).resolve().parents[1] / "pyproject.toml").read_text())["project"]["version"]
+metadata = (Path(__file__).resolve().parents[1] / "pyproject.toml").read_text()
+match = re.search(r'^version = "(\d+\.\d+\.\d+)"$', metadata, re.MULTILINE)
+if not match:
+    raise ValueError("Missing native project version")
+version = match.group(1)
 if not any(p.name.startswith("slot_sync-" + version + "-") or p.name == "slot_sync-" + version + ".tar.gz" for p in root.iterdir()):
     raise ValueError("Build the current package before pruning old build artifacts")
 for previous in list(root.iterdir()):
