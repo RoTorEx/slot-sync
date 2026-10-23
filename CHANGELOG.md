@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.11] - 2026-10-23
+
 - Keep archive packaging compatible with the CI host Python while retaining one prepared package version.
 
 ## [0.2.10] - 2026-10-23
