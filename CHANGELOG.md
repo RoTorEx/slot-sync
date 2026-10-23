@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Use the single /opt/slot-sync/venv installation instead of versioned virtual environments and an active-version link.
+
 ## [0.2.9] - 2026-10-21
 
 - Prepare the private VPS runtime and log directories for the gallendar service

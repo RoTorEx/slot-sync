@@ -70,7 +70,8 @@ The existing horizon is 14 days and polling interval 1800 seconds. The accepted
 horizon range is one to thirty days; the current interval keeps source changes
 within the next half-hour pass, subject to API availability and pass duration.
 Systemd owns scheduling and boot activation. The Rust writer was uninstalled
-after migration acceptance. Rollback uses an earlier compatible Python release;
+after migration acceptance. The only installed Python environment is `/opt/slot-sync/venv`; updates replace
+that copy. Code rollback reinstalls an earlier compatible published version;
 the Mac daemon stays absent.
 
 The health schema remains version 1 for Telegram Assistant compatibility.

@@ -15,7 +15,7 @@ Environment=SLOT_SYNC_LOGS=/srv/gallendar/slot-sync/logs
 Environment=SLOT_SYNC_HEALTH_DIR=/srv/gallendar/health
 Environment=PYTHONDONTWRITEBYTECODE=1
 WorkingDirectory=/srv/gallendar
-ExecStart=/opt/slot-sync/current/venv/bin/slot-sync sync --apply --scheduled --json
+ExecStart=/opt/slot-sync/venv/bin/slot-sync sync --apply --scheduled --json
 TimeoutStartSec=10min
 TimeoutStopSec=120
 UMask=0077
