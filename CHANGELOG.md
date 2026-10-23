@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.10] - 2026-10-23
+
 - Use the single /opt/slot-sync/venv installation instead of versioned virtual environments and an active-version link.
 
 ## [0.2.9] - 2026-10-21
