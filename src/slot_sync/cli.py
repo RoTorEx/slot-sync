@@ -20,7 +20,7 @@ from .runner import sync
 
 
 def paths(args):
-    home = Path(os.environ.get('SLOT_SYNC_HOME', Path.home() / '.config/slot-sync'))
+    home = Path(os.environ.get('SLOT_SYNC_HOME', Path.home() / '.toolbelt/slot-sync'))
     config = Path(args.config or os.environ.get('SLOT_SYNC_CONFIG') or os.environ.get('GALLENDAR_CONFIG') or home / 'config.toml')
     state = Path(args.state or os.environ.get('SLOT_SYNC_STATE') or home / 'state.sqlite3')
     logs = Path(os.environ.get('SLOT_SYNC_LOGS', home / 'logs'))

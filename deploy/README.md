@@ -9,7 +9,7 @@ virtual environment; no system Python packages are overwritten.
 
 - Single installed environment: `/opt/slot-sync/venv`.
 - Installed package metadata records the version; Git/GitHub owns source history.
-- Existing config: `/srv/gallendar/.x-cli-gallendar/config.toml`.
+- Existing config: `/srv/gallendar/.toolbelt/gallendar/config.toml`.
 - Active OAuth client: `/srv/gallendar/slot-sync/secrets/oauth-client.json`.
 - Active per-account OAuth tokens: `/srv/gallendar/slot-sync/secrets/oauth/`.
 - Legacy credential files remain separate recovery material; production uses the

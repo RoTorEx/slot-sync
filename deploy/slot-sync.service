@@ -9,7 +9,7 @@ Type=oneshot
 User=gallendar
 Group=gallendar
 Environment=HOME=/srv/gallendar
-Environment=SLOT_SYNC_CONFIG=/srv/gallendar/.x-cli-gallendar/config.toml
+Environment=SLOT_SYNC_CONFIG=/srv/gallendar/.toolbelt/gallendar/config.toml
 Environment=SLOT_SYNC_STATE=/srv/gallendar/slot-sync/state.sqlite3
 Environment=SLOT_SYNC_LOGS=/srv/gallendar/slot-sync/logs
 Environment=SLOT_SYNC_HEALTH_DIR=/srv/gallendar/health

@@ -30,7 +30,7 @@ make check
 make package-release
 ```
 
-The project lives under `personal/automations/slot-sync`. Release packages
+The project lives under `personal/tools/slot-sync`. Release packages
 are built under `~/construction_side/slot-sync/dist` by default.
 
 ## Configuration and commands
@@ -52,7 +52,7 @@ work before or after the command. `init` and `setup-config` alias `setup`.
 `config --edit` uses VISUAL, EDITOR or vi as a single executable, without shell
 interpolation. Setup preserves an existing config.
 
-The default config is `~/.config/slot-sync/config.toml`; its directory
+The default config is `~/.toolbelt/slot-sync/config.toml`; its directory
 can be changed with SLOT_SYNC_HOME. SLOT_SYNC_CONFIG and the
 legacy GALLENDAR_CONFIG are supported. OAuth and service-key paths are resolved
 relative to the config file. The bundled example documents existing TOML fields.
