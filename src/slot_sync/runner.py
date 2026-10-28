@@ -1,11 +1,11 @@
 """One-pass orchestration, durable recovery and private audit logging."""
 from contextlib import ExitStack
 from dataclasses import asdict
-from datetime import datetime, timezone
 import json
-import os
 from pathlib import Path
-from . import health
+from . import health, usage
+import time
+import uuid
 from .config import Config, SyncError
 from .google import Google
 from .planner import plan
@@ -13,15 +13,8 @@ from .storage import State, lock, utcnow
 
 
 def audit(directory, kind, data):
-    directory = Path(directory)
-    directory.mkdir(parents=True, exist_ok=True)
-    os.chmod(directory, 0o700)
-    path = directory / (datetime.now(timezone.utc).date().isoformat() + '.jsonl')
-    fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o600)
-    with os.fdopen(fd, 'a') as f:
-        f.write(json.dumps({'timestamp': utcnow(), 'event': kind, 'data': data}, ensure_ascii=False) + '\n')
-        f.flush()
-        os.fsync(f.fileno())
+    usage.append(directory, 'audit.jsonl', {'timestamp': utcnow(), 'epoch_seconds': int(time.time()),
+                                          'event': kind, 'data': data}, maximum=2 * 1024 * 1024)
 
 
 def execute(api, planned, state, record=lambda *_args: None):
@@ -39,6 +32,15 @@ def execute(api, planned, state, record=lambda *_args: None):
 
 def sync(config_path, state_path, logs_dir, apply=False, scheduled=False, health_dir=None, details=False):
     cfg, state, pass_id = None, None, None
+    operation_id, started = uuid.uuid4().hex, time.monotonic()
+    usage.event(logs_dir, 'sync_pass', 'started', {'apply': apply, 'scheduled': scheduled}, operation_id)
+    verified = 0
+    def record_operation(kind, value):
+        nonlocal verified
+        audit(logs_dir, kind, value)
+        if kind == "operation_verified":
+            verified += 1
+            usage.event(logs_dir, "calendar_write", "success", {"mode": value["kind"], "operations": 1}, operation_id)
     try:
         with ExitStack() as stack:
             if apply:
@@ -58,15 +60,19 @@ def sync(config_path, state_path, logs_dir, apply=False, scheduled=False, health
                                    'applied': apply, 'actions': [asdict(a) for a in planned.actions]})
             if apply:
                 state.adopt(planned.namespace, planned.bindings)
-                execute(api, planned, state, lambda kind, value: audit(logs_dir, kind, value))
+                execute(api, planned, state, record_operation)
                 completion[:] = ['success', planned.counts]
             result = {'applied': apply, 'namespace': planned.namespace, 'changes': planned.counts}
             if details:
                 result['actions'] = [asdict(a) for a in planned.actions]
         if apply and scheduled and health_dir:
             health.complete(health_dir, cfg.poll_seconds)
+        usage.event(logs_dir, 'sync_pass', 'success', {**planned.counts, 'apply': apply, 'scheduled': scheduled},
+                    operation_id, round((time.monotonic() - started) * 1000))
         return result
     except Exception as error:
+        usage.event(logs_dir, 'sync_pass', 'partial' if verified else 'error', {'apply': apply, 'operations': verified, 'error_code': 'sync_failed'},
+                    operation_id, round((time.monotonic() - started) * 1000))
         if apply and scheduled and health_dir:
             # The last successful pass never advances on failure, including invalid config.
             health.complete(health_dir, cfg.poll_seconds if cfg else configured_interval(config_path, health_dir), error)

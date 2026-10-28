@@ -138,3 +138,8 @@ uv tool install --force --from /absolute/path/to/retained-wheel.whl slot-sync
 The executable is `~/.toolbelt/slot-sync/bin/slot-sync`; configuration remains
 `~/.toolbelt/slot-sync/config.toml`. Replacing a wheel never authorizes a calendar
 synchronization. Use the same Toolbelt directories for subsequent package updates.
+
+## Local usage logs
+
+See [usage logging](docs/usage-logging.md) for product events, privacy, paths,
+rotation and interpretation limits.

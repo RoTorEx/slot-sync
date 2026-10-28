@@ -1,5 +1,9 @@
 # SlotSync changelog
 
+## Unreleased
+
+- Add bounded, metadata-only local product usage evidence; preserve business and recovery state.
+
 ## [Unreleased]
 
 ## [0.2.12] - 2026-10-28

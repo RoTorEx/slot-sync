@@ -69,6 +69,21 @@ def edit(path):
 
 
 def dispatch(args):
+    from . import usage
+    _, _, _, logs = paths(args)
+    operation_id = usage.uuid.uuid4().hex
+    started = time.monotonic()
+    usage.event(logs, 'command', 'started', {'mode': args.command or 'help'}, operation_id)
+    try:
+        result = _dispatch(args)
+    except Exception:
+        usage.event(logs, 'command', 'error', {'mode': args.command or 'help', 'error_code': 'command_failed'}, operation_id, round((time.monotonic() - started) * 1000))
+        raise
+    usage.event(logs, 'command', 'success', {'mode': args.command or 'help'}, operation_id, round((time.monotonic() - started) * 1000))
+    return result
+
+
+def _dispatch(args):
     home, path, state, logs = paths(args)
     command = args.command
     if command in ('home', 'version'):
