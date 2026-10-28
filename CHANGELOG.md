@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.12] - 2026-10-28
+
 - Toolbelt migration: use `~/.toolbelt/<name>` for custom installations and update project-path references where applicable.
 
 ## [0.2.11] - 2026-10-23
