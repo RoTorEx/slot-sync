@@ -122,3 +122,19 @@ tags are retained locally without publishing old Rust releases in this repositor
 CI checks Linux and macOS, builds the wheel/source archive, installs the wheel
 in a clean environment, and publishes checksummed assets for release tags.
 No PyPI publication is configured.
+
+## Personal Toolbelt installation
+
+Keep the installed runtime separate from this source checkout. Build the wheel
+with `make package-release`, retain the selected wheel under
+`~/.toolbelt/slot-sync/packages/`, then install it using:
+
+```sh
+UV_TOOL_DIR="$HOME/.toolbelt/slot-sync/runtime" \
+UV_TOOL_BIN_DIR="$HOME/.toolbelt/slot-sync/bin" \
+uv tool install --force --from /absolute/path/to/retained-wheel.whl slot-sync
+```
+
+The executable is `~/.toolbelt/slot-sync/bin/slot-sync`; configuration remains
+`~/.toolbelt/slot-sync/config.toml`. Replacing a wheel never authorizes a calendar
+synchronization. Use the same Toolbelt directories for subsequent package updates.
