@@ -74,12 +74,15 @@ after migration acceptance. The only installed Python environment is `/opt/slot-
 that copy. Code rollback reinstalls an earlier compatible published version;
 the Mac daemon stays absent.
 
-The health schema remains version 1 for Telegram Assistant compatibility.
+The health schema remains version 1 for existing safe monitoring consumers.
 Successful scheduled passes advance last_success_at; failed passes preserve it.
-Explicit reauthorization is distinct from generic sync failure. Existing monitor
-thresholds remain owned by Telegram Assistant: immediate reauthorization/missing
-state detection, and overdue after two polling intervals. A complete VPS outage
-requires monitoring outside that VPS.
+Explicit reauthorization is distinct from generic sync failure. Node Tools reads
+the existing safe health report and owns immediate error/reauthorization/missing
+state detection, overdue after two polling intervals, persistent hourly reminders
+until fresh successful synchronization, and recovery. Node Radar delivers those
+notices; calendar outcomes are not sent to Healthchecks.io. No OAuth credentials
+or calendar content are exposed to either monitoring consumer. A complete VPS
+outage requires monitoring outside that VPS.
 
 Implementation: config.py validates contracts; model.py owns identities/privacy;
 planner.py computes changes; google.py and oauth.py own provider boundaries;
