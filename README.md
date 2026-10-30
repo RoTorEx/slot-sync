@@ -7,7 +7,13 @@ Source calendars remain read-only. There is no web server or Docker requirement.
 This repository preserves Gallendar's history, TOML routes, OAuth credential
 format and managed-event identities. Python is a fresh implementation; the
 Rust runtime and original local checkout were removed after migration acceptance.
-Legacy config paths and event markers remain compatible. Current calendar behavior is
+Legacy config paths and event markers remain compatible. The local config entrypoint is
+`~/.toolbelt/slot-sync/config.toml`. A retained config symlink may point to
+`~/.toolbelt/gallendar/config.toml`; after moving a legacy installation, update
+that link instead of leaving it on a removed `.x-cli-gallendar` path. Relative
+credential paths resolve beside the real configuration file. Retiring the old
+source repository does not authorize deleting that still-used private state.
+ Current calendar behavior is
 specified in [BUSINESS.md](BUSINESS.md), server procedures in
 [deploy/README.md](deploy/README.md), and observed verification in
 [business/python-migration.md](business/python-migration.md).
