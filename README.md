@@ -30,7 +30,7 @@ make check
 make package-release
 ```
 
-The project lives under `personal/tools/slot-sync`. Release packages
+The project lives under `personal/workflows/slot-sync`. Release packages
 are built under `~/construction_side/slot-sync/dist` by default.
 
 ## Configuration and commands
