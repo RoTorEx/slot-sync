@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.13] - 2026-10-31
+
 - Add bounded, metadata-only local product usage evidence; preserve business and recovery state.
 
 ## [0.2.12] - 2026-10-28
