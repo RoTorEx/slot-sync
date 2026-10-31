@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Keep installation tooling outside the service environment; do not retain
+  unused pip and its vendored dependencies in the calendar runtime.
+
 - Refresh locked pyasn1 to 0.6.5 for ASN.1 decoder security fixes; retain
   calendar routes, credentials and synchronization semantics.
 - Publish the hashed locked requirements and checksum alongside each wheel;

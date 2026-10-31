@@ -19,11 +19,13 @@ virtual environment; no system Python packages are overwritten.
 - Existing public health: `/srv/gallendar/health/health.json`.
 
 A release must include the wheel and SHA-256, matching units, and locked Python
-requirements. Install with pip in the private installed environment using the exported
-hashed lock, then install the wheel with --no-deps. Use the published
+requirements. Use administrator-owned installation tooling outside the service
+environment, targeting its interpreter with pip's `--python` option. Install the
+exported hashed lock, then the wheel with `--no-deps`. Use the published
 `slot_sync-<version>-requirements.txt` with `--require-hashes`, rather than
-resolving dependencies again from the wheel. Keep the installation tool itself
-on a supported patched pip version. Read back the installed
+resolving dependencies again from the wheel. Do not retain pip or its vendored
+packages in the service environment; the application does not use them. Keep
+temporary installation tooling private and remove it after verification. Read back the installed
 application and pyasn1 versions, run the offline demo and tests, then live doctor
 and preview. Credentials
 must remain readable only by the intended service identity. Release code is
