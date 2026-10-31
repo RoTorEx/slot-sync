@@ -3,6 +3,7 @@ import hashlib
 from pathlib import Path
 import sys
 import re
+import subprocess
 root = Path(sys.argv[1])
 metadata = (Path(__file__).resolve().parents[1] / "pyproject.toml").read_text()
 match = re.search(r'^version = "(\d+\.\d+\.\d+)"$', metadata, re.MULTILINE)
@@ -14,8 +15,15 @@ if not any(p.name.startswith("slot_sync-" + version + "-") or p.name == "slot_sy
 for previous in list(root.iterdir()):
     match = re.match(r"slot[-_]sync-(\d+\.\d+\.\d+)(?:-|\.)", previous.name)
     if (match and match.group(1) != version and previous.is_file() and not previous.is_symlink()
-            and any(previous.name.endswith(suffix) for suffix in (".whl", ".tar.gz", ".whl.sha256", ".tar.gz.sha256"))):
+            and any(previous.name.endswith(suffix) for suffix in (
+                ".whl", ".tar.gz", ".whl.sha256", ".tar.gz.sha256",
+                "-requirements.txt", "-requirements.txt.sha256"))):
         previous.unlink()
+requirements = root / f'slot_sync-{version}-requirements.txt'
+subprocess.run([
+    'uv', 'export', '--frozen', '--no-dev', '--no-emit-project',
+    '--format', 'requirements-txt', '--output-file', str(requirements),
+], check=True, stdout=subprocess.DEVNULL)
 for p in root.iterdir():
-    if p.suffix == '.whl' or p.name.endswith('.tar.gz'):
+    if p.suffix == '.whl' or p.name.endswith('.tar.gz') or p == requirements:
         p.with_name(p.name + '.sha256').write_text(hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + p.name + '\n')

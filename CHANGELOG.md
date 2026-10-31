@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Refresh locked pyasn1 to 0.6.5 for ASN.1 decoder security fixes; retain
+  calendar routes, credentials and synchronization semantics.
+- Publish the hashed locked requirements and checksum alongside each wheel;
+  exercise that exact dependency set in the release package smoke check.
+
 ## [0.2.13] - 2026-10-31
 
 - Add bounded, metadata-only local product usage evidence; preserve business and recovery state.

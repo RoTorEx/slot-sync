@@ -20,8 +20,12 @@ virtual environment; no system Python packages are overwritten.
 
 A release must include the wheel and SHA-256, matching units, and locked Python
 requirements. Install with pip in the private installed environment using the exported
-hashed lock, then install the wheel with --no-deps. Read back the installed
-version, run the offline demo and tests, then live doctor and preview. Credentials
+hashed lock, then install the wheel with --no-deps. Use the published
+`slot_sync-<version>-requirements.txt` with `--require-hashes`, rather than
+resolving dependencies again from the wheel. Keep the installation tool itself
+on a supported patched pip version. Read back the installed
+application and pyasn1 versions, run the offline demo and tests, then live doctor
+and preview. Credentials
 must remain readable only by the intended service identity. Release code is
 root-owned and the service cannot modify it.
 

@@ -31,7 +31,8 @@ jobs:
           uv sync --frozen
           make package-release DIST_DIR=dist
           uv venv /tmp/callendars-package-smoke
-          uv pip install --python /tmp/callendars-package-smoke/bin/python dist/*.whl
+          uv pip install --python /tmp/callendars-package-smoke/bin/python --require-hashes -r dist/*-requirements.txt
+          uv pip install --python /tmp/callendars-package-smoke/bin/python --no-deps dist/*.whl
           /tmp/callendars-package-smoke/bin/slot-sync demo --json
           /tmp/callendars-package-smoke/bin/slot-sync --version
       - uses: actions/upload-artifact@v6
