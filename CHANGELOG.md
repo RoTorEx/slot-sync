@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.14] - 2026-10-31
+
 - Keep installation tooling outside the service environment; do not retain
   unused pip and its vendored dependencies in the calendar runtime.
 
